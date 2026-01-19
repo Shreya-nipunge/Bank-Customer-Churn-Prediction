@@ -4,7 +4,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 history.db
-*.pkl
+# *.pkl is removed to allow the model file to be pushed for deployment
 !.gitignore
 !.gitkeep
 # Exclude model if it's too large, but for Streamlit Cloud we might need it.
