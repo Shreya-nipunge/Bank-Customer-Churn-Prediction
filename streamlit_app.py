@@ -11,132 +11,92 @@ st.set_page_config(
     page_title="Bank Customer Churn Prediction",
     page_icon="🏦",
     layout="wide",
-    initial_sidebar_state="collapsed"
 )
 
 # Initialize DB
 init_db()
 
-# Custom CSS for Premium Design - FORCING LIGHT THEME COLORS FOR READABILITY
+# Premium CSS - Direct & Robust
 st.markdown("""
-    <style>
-    /* Google Font */
+<style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-
+    
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
+        color: #1e293b;
     }
 
-    /* Force Light Theme Base colors to prevent theme-clashing */
+    /* Main Background */
     .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-        color: #1e293b !important;
-    }
-    
-    /* Header/Subheader Text Colors */
-    h1, h2, h3, .stSubheader, p, label, .stMarkdown {
-        color: #1e293b !important;
+        background: #f8fafc;
     }
 
-    /* Glassmorphism Card Style - targeting the common block container */
-    [data-testid="stVerticalBlock"] > div:has(.glass-card-trigger) {
-        background: rgba(255, 255, 255, 0.8) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-        border-radius: 20px !important;
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        padding: 2.5rem !important;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
-        margin-bottom: 2rem !important;
-    }
-    
-    /* Alternative Card Styling for when :has is not supported */
-    .st-emotion-cache-16idsys, .st-emotion-cache-19p0pbc {
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 20px;
-        padding: 20px;
-        border: 1px solid white;
-    }
-
-    /* Input Field Styling */
-    .stNumberInput input, .stSelectbox [data-baseweb="select"], .stSlider {
-        background-color: white !important;
-        color: #1e293b !important;
-        border-radius: 12px !important;
-        border: 1px solid #cbd5e1 !important;
-    }
-    
-    /* Custom Title */
-    .main-title {
+    /* Styling Headers */
+    h1 {
         background: linear-gradient(90deg, #1e3a8a, #3b82f6);
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent !important;
+        -webkit-text-fill-color: transparent;
         font-weight: 800;
         text-align: center;
-        font-size: 3.2rem;
-        margin-bottom: 0.2rem;
-        color: #1e3a8a; /* Fallback */
+        font-size: 3rem !important;
+        margin-bottom: 0.5rem !important;
     }
     
-    .sub-title {
-        color: #475569 !important;
+    .sub-heading {
+        color: #64748b;
         text-align: center;
         font-size: 1.2rem;
+        margin-bottom: 2rem;
         font-weight: 500;
-        margin-bottom: 3rem;
     }
 
-    /* Prediction Card */
+    /* Input Field Labels */
+    label {
+        font-weight: 600 !important;
+        color: #475569 !important;
+    }
+
+    /* Predict Button */
+    .stButton > button {
+        background: linear-gradient(90deg, #2563eb, #1d4ed8) !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.75rem 2rem !important;
+        height: 3.5rem !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .stButton > button:hover {
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3) !important;
+        transform: translateY(-1px);
+    }
+
+    /* Result Cards */
     .res-card {
         padding: 2.5rem;
-        border-radius: 25px;
+        border-radius: 20px;
         text-align: center;
         color: white !important;
-        margin: 2rem 0;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        margin: 1.5rem 0;
     }
-    
     .res-card * { color: white !important; }
-    
-    .res-stay { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; }
-    .res-exit { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important; }
+    .res-stay { background: linear-gradient(135deg, #059669, #10b981) !important; }
+    .res-exit { background: linear-gradient(135deg, #e11d48, #f43f5e) !important; }
 
-    /* Buttons */
-    .stButton>button {
-        background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%) !important;
-        color: white !important;
-        font-weight: 700 !important;
-        border-radius: 12px !important;
-        padding: 0.8rem 2rem !important;
-        border: none !important;
-        transition: all 0.3s ease !important;
-        width: 100% !important;
-        height: 3.5rem !important;
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4) !important;
-        color: white !important;
-    }
-
-    /* Dataframe/Table styling */
-    [data-testid="stDataFrame"] {
+    /* Fix for Streamlit's default container borders */
+    [data-testid="stExpander"], [data-testid="stVerticalBlockBorderWrapper"] {
+        border-color: #e2e8f0 !important;
         background-color: white !important;
-        border-radius: 10px !important;
+        border-radius: 16px !important;
     }
-
-    /* Layout cleanup */
-    .block-container {
-        padding-top: 2rem !important;
-        max-width: 1100px !important;
-    }
-    </style>
+</style>
 """, unsafe_allow_html=True)
 
-# App Content
-st.markdown('<h1 class="main-title">Bank Customer Churn Prediction</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Advanced ML Analytics for Proactive Customer Retention</p>', unsafe_allow_html=True)
+# App Title
+st.markdown("<h1>Bank Customer Churn Prediction</h1>", unsafe_allow_html=True)
+st.markdown("<div class='sub-heading'>Advanced Machine Learning Analytics for Banking Proactive Retention</div>", unsafe_allow_html=True)
 
 # Load Model
 @st.cache_resource
@@ -146,45 +106,43 @@ def load_model():
 model = load_model()
 
 # Form Section
-with st.container():
-    # Invisible marker to trigger CSS card styling for this container
-    st.markdown('<span class="glass-card-trigger"></span>', unsafe_allow_html=True)
-    
+with st.container(border=True):
     st.subheader("👤 Customer Demographics")
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    c1, c2, c3 = st.columns(3)
+    with c1:
         age = st.number_input("Customer Age", 18, 100, 45)
         gender = st.selectbox("Gender", list(GENDER_MAP.keys()))
         dependents = st.number_input("Dependent Count", 0, 10, 3)
-    with col2:
+    with c2:
         education = st.selectbox("Education Level", list(EDUCATION_MAP.keys()))
         marital = st.selectbox("Marital Status", list(MARITAL_MAP.keys()))
         income = st.selectbox("Income Category", list(INCOME_MAP.keys()))
-    with col3:
+    with c3:
         card = st.selectbox("Card Category", list(CARD_MAP.keys()))
         months_on_book = st.number_input("Months on Book", 1, 120, 36)
         rel_count = st.number_input("Relationship Count", 1, 6, 3)
 
     st.divider()
-    
-    st.subheader("💳 Financial Behavior & Activity")
-    col4, col5, col6 = st.columns(3)
-    with col4:
+
+    st.subheader("💳 Financial Behavior")
+    c4, c5, c6 = st.columns(3)
+    with c4:
         months_inactive = st.number_input("Months Inactive (12m)", 0, 12, 1)
         contacts = st.number_input("Contacts (12m)", 0, 10, 2)
         limit = st.number_input("Credit Limit ($)", 0.0, 100000.0, 5000.0)
-    with col5:
+    with c5:
         revolving = st.number_input("Revolving Balance ($)", 0.0, 50000.0, 1500.0)
         open_buy = st.number_input("Avg Open to Buy ($)", 0.0, 100000.0, 3500.0)
         amt_change = st.number_input("Amt Change (Q4 vs Q1)", 0.0, 10.0, 0.7)
-    with col6:
+    with c6:
         trans_amt = st.number_input("Total Trans Amt ($)", 0.0, 50000.0, 2500.0)
         trans_ct = st.number_input("Total Trans Count", 0, 200, 45)
         ct_change = st.number_input("Ct Change (Q4 vs Q1)", 0.0, 10.0, 0.8)
 
     util_ratio = st.slider("Avg Utilization Ratio", 0.0, 1.0, 0.1, step=0.01)
-
-    if st.button("🚀 PREDICT CUSTOMER LOYALTY", use_container_width=True):
+    
+    st.write(" ")
+    if st.button("🚀 PREDICT CUSTOMER LOYALTY STATUS", use_container_width=True):
         # Prediction Logic
         data = {
             'customer_age': age, 'gender': gender, 'dependent_count': dependents,
@@ -217,41 +175,42 @@ with st.container():
         st.markdown(f'''
             <div class="res-card {res_class}">
                 <h2 style="margin:0;">{res_icon} CUSTOMER STATUS: {res_label}</h2>
-                <h1 style="font-size: 4.5rem; margin: 0.5rem 0;">{confidence*100:.1f}%</h1>
+                <h1 style="font-size: 4.5rem; margin: 0.5rem 0; color: white !important;">{confidence*100:.1f}%</h1>
                 <p style="font-weight: 600; font-size: 1.1rem; opacity: 0.9;">MODEL PREDICTION CONFIDENCE</p>
             </div>
         ''', unsafe_allow_html=True)
 
 # Analytics Section
-st.divider()
-st.header("📊 Prediction Analytics & History")
+st.write(" ")
+st.header("📊 Prediction History & Insights")
 history = get_history(50)
 
 if history:
     df_h = pd.DataFrame(history)
-    col_chart, col_data = st.columns([2, 1])
+    ch, dt = st.columns([2, 1])
     
-    with col_chart:
-        # Simple area chart using Plotly
-        df_h['time'] = pd.to_datetime(df_h['timestamp']).dt.strftime('%H:%M:%S')
-        fig = px.area(df_h.sort_values('timestamp'), x="time", y="confidence", 
-                      title="Confidence Trend (Latest 50 Predictions)",
-                      line_shape="spline", template="plotly_white")
-        fig.update_traces(line_color='#3b82f6', fillcolor="rgba(59, 130, 246, 0.2)")
-        fig.update_layout(yaxis_range=[0, 1.05], font_family="Inter", height=350)
-        st.plotly_chart(fig, use_container_width=True)
+    with ch:
+        with st.container(border=True):
+            df_h['time'] = pd.to_datetime(df_h['timestamp']).dt.strftime('%H:%M:%S')
+            fig = px.area(df_h.sort_values('timestamp'), x="time", y="confidence", 
+                          title="Confidence Trend (Latest Predictions)",
+                          line_shape="spline", template="plotly_white")
+            fig.update_traces(line_color='#3b82f6', fillcolor="rgba(59, 130, 246, 0.1)")
+            fig.update_layout(yaxis_range=[0, 1.05], font_family="Inter", height=350, margin=dict(l=0, r=0, t=40, b=0))
+            st.plotly_chart(fig, use_container_width=True)
 
-    with col_data:
-        st.subheader("Recent Activity")
-        st.dataframe(
-            df_h[['time', 'prediction', 'confidence']].head(10),
-            column_config={
-                "time": "Time",
-                "prediction": "Status",
-                "confidence": st.column_config.ProgressColumn("Conf", format="%.2f", min_value=0, max_value=1)
-            },
-            hide_index=True,
-            use_container_width=True
-        )
+    with dt:
+        with st.container(border=True):
+            st.subheader("Logs")
+            st.dataframe(
+                df_h[['time', 'prediction', 'confidence']].head(10),
+                column_config={
+                    "time": "Time",
+                    "prediction": "Status",
+                    "confidence": st.column_config.ProgressColumn("Conf", format="%.2f", min_value=0, max_value=1)
+                },
+                hide_index=True,
+                use_container_width=True
+            )
 else:
-    st.info("Analytics will appear here after your first prediction.")
+    st.info("Analytics will populate after your first prediction.")
